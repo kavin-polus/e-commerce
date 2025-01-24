@@ -29,6 +29,8 @@ const LoginRegister = () => {
     try {
       if (isLogin) {
         const response = await api.post('/login', payload);
+        localStorage.setItem('userId',response.data.user.userId)
+        
         localStorage.setItem('accessToken', response.data.accessToken);
         localStorage.setItem('refreshToken', response.data.refreshToken);
         dispatch(setRole(roles));

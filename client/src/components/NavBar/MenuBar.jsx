@@ -11,14 +11,13 @@ const MenuBar = () => {
   const navigate = useNavigate();
   const role = useSelector((state) => state.role);
 
-  const handleLogout = () => {
+  const handleLogout = (event) => {
+    event.preventDefault();
     console.log("Logging out...");
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     dispatch(setRole(null));
-    console.log("Redirecting to login...");
-    console.log("Role after logout:",role);
-    navigate("/login");
+    navigate('/login');
   };
   
 
@@ -62,6 +61,9 @@ const MenuBar = () => {
               {getCartItemCount}
             </span>
           </div>
+          <Link to="/orderHistory" className="text-sm/6 font-semibold text-gray-900">
+            Order History
+          </Link>
         </div>
       </nav>
     </header>
