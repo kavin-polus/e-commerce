@@ -1,23 +1,30 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { FaEdit, FaTrashAlt, FaHeart, FaShareAlt } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../../context/cartContext";
+import SearchOption from "../Search/searchOption";
+import api from "../../services/api.js";
 
 const MyProductList = ({ products = [] }) => {
   const navingate = useNavigate();
   const { addItemToCart } = useContext(CartContext);
-  const handleAddToCart = (product) => {
-    addItemToCart(product);
-    navingate("/shopCart");
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleAddToCart = async (product) => {
+      addItemToCart(product);
+      navingate("/shopCart");  
   };
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div>
-      {products.length === 0 ? (
-        <p>No products added yet.</p>
+      <SearchOption setSearchTerm={setSearchTerm} />
+      {filteredProducts.length === 0 ? (
+        <p>No products found.</p>
       ) : (
-        products.map((product) => (
+        filteredProducts.map((product) => (
           <article
             key={product._id}
             className="flex flex-col bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden mb-4"
@@ -34,7 +41,7 @@ const MyProductList = ({ products = [] }) => {
                 <p>Stock: {product.stock}</p>
               </div>
               <div className="mt-4 flex space-x-4 text-gray-600">
-                <button className="text-xl hover:text-gray-900">
+                {/* <button className="text-xl hover:text-gray-900">
                   <FaEdit />
                 </button>
                 <button className="text-xl hover:text-gray-900">
@@ -45,12 +52,11 @@ const MyProductList = ({ products = [] }) => {
                 </button>
                 <button className="text-xl hover:text-gray-900">
                   <FaShareAlt />
-                </button>
+                </button> */}
 
                 <button
                   className="btn btn-primary"
                   onClick={() => handleAddToCart(product)}
-                 
                 >
                   {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
                 </button>

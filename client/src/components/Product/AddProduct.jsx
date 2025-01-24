@@ -4,6 +4,8 @@ import axios from 'axios';
 import MyProductList from './MyProductList';
 import { CartContext } from '../../context/cartContext';
 import api from '../../services/api';
+import SearchOption from '../Search/searchOption';
+import { useSelector } from 'react-redux';
 
 const AddProduct = () => {
   const [product, setProduct] = useState({
@@ -13,6 +15,8 @@ const AddProduct = () => {
     stock: '',
   });
   const [activeTab, setActiveTab] = useState('myProducts');
+
+  const role = useSelector((state) => state.role.role);
 
   const { addProduct,products,setProducts } = useContext(CartContext);
 
@@ -35,9 +39,13 @@ const AddProduct = () => {
     };
 
     try {
-      const response = await api.post('/createProduct', newProduct);
+      const response = await api.post('/createProduct', newProduct,{ withCredentials: true });
+      console.log("product",response);
+      
       addProduct(response.data);
+      localStorage.setItem("productId",response.data._id)
       setProduct({ name: '', description: '', price: '', stock: '' });
+      setActiveTab('myProducts')
     } catch (error) {
       console.error('Error adding product:', error);
     }
@@ -49,7 +57,7 @@ const AddProduct = () => {
     if (activeTab === 'myProducts' && currentUserId) {
       const fetchProducts = async () => {
         try {
-          const response = await api.get('/getUserProduct');
+          const response = await api.get('/getUserProduct',{ withCredentials: true });
           console.log(response);
           
           setProducts(response.data.products);
@@ -84,14 +92,16 @@ const AddProduct = () => {
         >
           Other Products
         </button>
-        <button
-          onClick={() => setActiveTab('addProduct')}
-          className={`px-4 py-2 font-medium text-sm rounded-t-lg focus:outline-none ${
-            activeTab === 'addProduct' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
-          }`}
-        >
-          Add Product
-        </button>
+        {role === 'seller' && (
+          <button
+            onClick={() => setActiveTab('addProduct')}
+            className={`px-4 py-2 font-medium text-sm rounded-t-lg focus:outline-none ${
+              activeTab === 'addProduct' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            Add Product
+          </button>
+        )}
       </div>
 
       <div className="w-full max-w-4xl">

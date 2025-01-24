@@ -70,7 +70,7 @@ const loginUser = async (req, res) => {
 
     res.status(200).json({
       message: 'Login successful',accessToken,refreshToken,
-      user: {email: user.email },
+      user: {email: user.email,userId: user._id },
     });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
